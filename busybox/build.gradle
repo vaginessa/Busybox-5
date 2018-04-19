@@ -1,0 +1,83 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'de.undercouch.download'
+
+
+android {
+    compileSdkVersion 27
+
+    def busyboxVersion="1.28.1-defconfig-multiarch"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 1281
+        versionName=busyboxVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "architecture"
+
+    productFlavors{
+        armv5l{ dimension "architecture" }
+        armv7l{ dimension "architecture" }
+        armv7m{ dimension "architecture" }
+        armv7r{ dimension "architecture" }
+        armv8l{ dimension "architecture" }
+        mips{ dimension "architecture" }
+        mips64{ dimension "architecture" }
+        x86_64{ dimension "architecture" }
+
+        all{ flavor->
+            task("download${flavor.name}Busybox",type:Download){
+                src "https://busybox.net/downloads/binaries/$busyboxVersion/busybox-${flavor.name}"
+                dest new File(projectDir, 'src/main/assets/busybox')
+                overwrite true
+                onlyIfModified true
+            }
+        }
+    }
+
+    defaultPublishConfig "armv7m"
+}
+
+if( android.productFlavors.size() > 0 ) {
+    android.libraryVariants.all { variant ->
+        if(variant.name == android.defaultPublishConfig ) {
+            def bundleTask = tasks["bundle${name.capitalize()}"]
+            artifacts {
+                archives(bundleTask.archivePath) {
+                    classifier null
+                    builtBy bundleTask
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'commons-io:commons-io:2.6'
+    api 'io.reactivex.rxjava2:rxjava:2.1.12'
+    api 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.2'
+}
+
+afterEvaluate {
+    android.productFlavors.all {
+        flavor ->
+            tasks."generate${flavor.name.capitalize()}DebugResources".dependsOn "download${flavor.name}Busybox"
+            tasks."generate${flavor.name.capitalize()}ReleaseResources".dependsOn "download${flavor.name}Busybox"
+    }
+}
+
+repositories {
+    mavenCentral()
+}

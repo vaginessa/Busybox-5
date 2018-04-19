@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "example.io.busybox"
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions "architecture"
+
+    productFlavors {
+        armv5l { dimension "architecture" }
+        armv7l { dimension "architecture" }
+        armv7m { dimension "architecture" }
+        armv7r { dimension "architecture" }
+        armv8l { dimension "architecture" }
+        mips { dimension "architecture" }
+        mips64 { dimension "architecture" }
+        x86_64 { dimension "architecture" }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    armv5lApi project(":busybox")
+    armv7lApi project(":busybox")
+    armv7mApi project(":busybox")
+    armv7rApi project(":busybox")
+    armv8lApi project(":busybox")
+    mipsApi project(":busybox")
+    mips64Api project(":busybox")
+    x86_64Api project(":busybox")
+}
