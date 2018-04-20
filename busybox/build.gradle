@@ -47,8 +47,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'commons-io:commons-io:2.6'
     api 'io.reactivex.rxjava2:rxjava:2.1.12'
     api 'io.reactivex.rxjava2:rxkotlin:2.2.0'
