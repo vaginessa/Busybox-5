@@ -1,9 +1,8 @@
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.yzheka.Busybox'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'de.undercouch.download'
-apply plugin: 'com.github.dcendents.android-maven'
-
-group='com.github.yzheka'
 
 android {
     compileSdkVersion 27
@@ -42,22 +41,6 @@ android {
                 dest new File(projectDir, 'src/main/assets/busybox')
                 overwrite true
                 onlyIfModified true
-            }
-        }
-    }
-
-    defaultPublishConfig "armv7m"
-}
-
-if( android.productFlavors.size() > 0 ) {
-    android.libraryVariants.all { variant ->
-        if(variant.name == android.defaultPublishConfig ) {
-            def bundleTask = tasks["bundle${name.capitalize()}"]
-            artifacts {
-                archives(bundleTask.archivePath) {
-                    classifier null
-                    builtBy bundleTask
-                }
             }
         }
     }
